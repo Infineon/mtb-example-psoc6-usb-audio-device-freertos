@@ -7,7 +7,7 @@
 #
 ################################################################################
 # \copyright
-# Copyright 2018-2019 Cypress Semiconductor Corporation
+# Copyright 2018-2020 Cypress Semiconductor Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +29,7 @@
 ################################################################################
 
 # Target board/hardware
-#TARGET=CY8CPROTO-062-4343W
 TARGET=CY8CKIT-062-WIFI-BT
-#TARGET=CY8CKIT-062S2-43012
 
 # Name of application (used to derive name of final linked file).
 APPNAME=mtb-example-psoc6-usb-audio-device-freertos
@@ -69,8 +67,8 @@ VERBOSE=
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS=CUSTOM_DESIGN_MODUS
-ifeq ($(TARGET), $(filter $(TARGET), CY8CKIT-062-WIFI-BT CY8CKIT-062S2-43012))
+COMPONENTS=CUSTOM_DESIGN_MODUS FREERTOS
+ifeq ($(TARGET), $(filter $(TARGET), CY8CKIT-062-WIFI-BT CY8CKIT-062S2-43012 CYW9P62S1-43012EVB-01 CYW9P62S1-43438EVB-01))
   COMPONENTS+=AK4954A
 endif
 
@@ -89,7 +87,7 @@ SOURCES=
 INCLUDES=
 
 # Add additional defines to the build process (without a leading -D).
-DEFINES=
+DEFINES+=CY_RTOS_AWARE
 
 # Select softfp or hardfp floating point. Default is softfp.
 VFP_SELECT=

@@ -187,8 +187,8 @@
     #define AK4954A_HP_MUTE_VALUE                   (0x90)  /* Writing <= 0x90 mutes the headphone output */
 
     /* Default Configuration Values */
-    #define AK4954A_DEF_SAMPLING_RATE               AK4954A_MODE_CTRL2_CM_256fs
-    #define AK4954A_DEF_DATA_ALIGNMENT              AK4954A_MODE_CTRL1_DIF_32_I2S
+    #define AK4954A_DEF_SAMPLING_RATE               AK4954A_MODE_CTRL2_CM_384fs
+    #define AK4954A_DEF_DATA_ALIGNMENT              AK4954A_MODE_CTRL1_DIF_24_16_I2S
 
     uint32_t ak4954a_init(ak4954a_transmit_callback callback);
     uint32_t ak4954a_adjust_volume(uint8_t volume);

@@ -35,7 +35,7 @@
 #include "ak4954a.h"
 #include "stdbool.h"
 
-#define I2C_WRITE_OPERATION		(0x00)
+#define I2C_WRITE_OPERATION        (0x00)
 
 ak4954a_transmit_callback   ak4954a_transmit;
 
@@ -46,7 +46,7 @@ ak4954a_transmit_callback   ak4954a_transmit;
 *   Initializes the codec with default settings.
 *
 * Parameters:  
-*	None
+*    None
 *
 * Return:
 *   uint32_t - I2C master transaction error status 
@@ -55,7 +55,7 @@ ak4954a_transmit_callback   ak4954a_transmit;
 uint32_t ak4954a_init(ak4954a_transmit_callback callback)
 {
     uint32_t ret;
-	
+    
     ak4954a_transmit = callback;
    
     /* Clear Power Managament 1 register (dummy write) */
@@ -77,7 +77,7 @@ uint32_t ak4954a_init(ak4954a_transmit_callback callback)
     
     /* Set MPWR pin Power Management */
     ret = ak4954a_transmit(AK4954A_REG_SIG_SEL1, AK4954A_SIG_SEL1_PMMP |
-                                                 AK4954A_SIG_SEL1_MGAIN_20dB);
+                                                 AK4954A_SIG_SEL1_MGAIN_0dB);
     if (ret) return ret;
     
     /* Clear Digital Filter Mode register */
@@ -99,11 +99,11 @@ uint32_t ak4954a_init(ak4954a_transmit_callback callback)
 ********************************************************************************
 * Summary:
 *   This function updates the volume of both the left and right channels of the
-* 	headphone output.
+*     headphone output.
 *
 *
 * Parameters:  
-*	volume - Steps of 0.5dB, where:
+*    volume - Steps of 0.5dB, where:
 *            Minimum volume: -65.5dB (0x8F)
 *            Maximum volume:  +6.0dB (0x00)
 *            Mute: (0x90~0xFF)
@@ -115,7 +115,7 @@ uint32_t ak4954a_init(ak4954a_transmit_callback callback)
 uint32_t ak4954a_adjust_volume(uint8_t volume)
 {
     uint32_t ret;
-    	
+        
     ret = ak4954a_transmit(AK4954A_REG_LCH_DIG_VOL, volume);
     if (ret) return ret;
     return ak4954a_transmit(AK4954A_REG_RCH_DIG_VOL, volume);
@@ -129,7 +129,7 @@ uint32_t ak4954a_adjust_volume(uint8_t volume)
 *   ak4954A_deactivate API after successful configuration update of the codec.
 *
 * Parameters:  
-*	None
+*    None
 *
 * Return:
 *   uint32_t - I2C master transaction error status
@@ -141,9 +141,9 @@ uint32_t ak4954a_activate(void)
     
     /* Enable Power Management DAC */
     ret = ak4954a_transmit(AK4954A_REG_PWR_MGMT1,
-    					   AK4954A_PWR_MGMT1_PMDAC | AK4954A_PWR_MGMT1_PMVCM |
-    					   AK4954A_PWR_MGMT1_PMADL | AK4954A_PWR_MGMT1_PMADR |
-						   AK4954A_PWR_MGMT1_PMPFIL);
+                           AK4954A_PWR_MGMT1_PMDAC | AK4954A_PWR_MGMT1_PMVCM |
+                           AK4954A_PWR_MGMT1_PMADL | AK4954A_PWR_MGMT1_PMADR |
+                           AK4954A_PWR_MGMT1_PMPFIL);
     if (ret) return ret;
     
     /* Enable Left/Right Channels */
@@ -161,7 +161,7 @@ uint32_t ak4954a_activate(void)
 *   any setting in the codec over I2C
 *
 * Parameters:  
-*	None
+*    None
 *
 * Return:
 *   uint32_t - I2C master transaction error status

@@ -86,7 +86,7 @@
         <Property id="CSX_MFS_DIVIDER_OFFSET_F2" value="2"/>
     </CsxProperties>
     <Widgets>
-        <Widget id="Button0" type="CSX_BUTTON">
+        <Widget id="Button0" type="CSD_BUTTON">
             <WidgetProperties>
                 <Property id="DIPLEXING" value="false"/>
                 <Property id="MAX_POS_X" value="300"/>
@@ -105,7 +105,7 @@
                 <Property id="ROW_IDAC_MOD0" value="32"/>
                 <Property id="ROW_IDAC_MOD1" value="32"/>
                 <Property id="ROW_IDAC_MOD2" value="32"/>
-                <Property id="IDAC_GAIN_INDEX" value="GAIN_300"/>
+                <Property id="IDAC_GAIN_INDEX" value="GAIN_2400"/>
                 <Property id="FINGER_TH" value="100"/>
                 <Property id="PROX_TOUCH_TH" value="200"/>
                 <Property id="NOISE_TH" value="40"/>
@@ -170,15 +170,7 @@
                 <Property id="EDGE_ANGLE_MAX" value="45"/>
             </WidgetProperties>
             <Electrodes>
-                <Electrode id="Rx0" kind="Column">
-                    <ElectrodeProperties>
-                        <Property id="IDAC0" value="32"/>
-                        <Property id="IDAC1" value="32"/>
-                        <Property id="IDAC2" value="32"/>
-                        <Property id="PINS" value="Dedicated pin"/>
-                    </ElectrodeProperties>
-                </Electrode>
-                <Electrode id="Tx" kind="Row">
+                <Electrode id="Sns0" kind="Sensor">
                     <ElectrodeProperties>
                         <Property id="IDAC0" value="32"/>
                         <Property id="IDAC1" value="32"/>
@@ -188,7 +180,7 @@
                 </Electrode>
             </Electrodes>
         </Widget>
-        <Widget id="Button1" type="CSX_BUTTON">
+        <Widget id="Button1" type="CSD_BUTTON">
             <WidgetProperties>
                 <Property id="DIPLEXING" value="false"/>
                 <Property id="MAX_POS_X" value="300"/>
@@ -207,7 +199,7 @@
                 <Property id="ROW_IDAC_MOD0" value="32"/>
                 <Property id="ROW_IDAC_MOD1" value="32"/>
                 <Property id="ROW_IDAC_MOD2" value="32"/>
-                <Property id="IDAC_GAIN_INDEX" value="GAIN_300"/>
+                <Property id="IDAC_GAIN_INDEX" value="GAIN_2400"/>
                 <Property id="FINGER_TH" value="100"/>
                 <Property id="PROX_TOUCH_TH" value="200"/>
                 <Property id="NOISE_TH" value="40"/>
@@ -272,15 +264,7 @@
                 <Property id="EDGE_ANGLE_MAX" value="45"/>
             </WidgetProperties>
             <Electrodes>
-                <Electrode id="Rx0" kind="Column">
-                    <ElectrodeProperties>
-                        <Property id="IDAC0" value="32"/>
-                        <Property id="IDAC1" value="32"/>
-                        <Property id="IDAC2" value="32"/>
-                        <Property id="PINS" value="Dedicated pin"/>
-                    </ElectrodeProperties>
-                </Electrode>
-                <Electrode id="Tx" kind="Row">
+                <Electrode id="Sns0" kind="Sensor">
                     <ElectrodeProperties>
                         <Property id="IDAC0" value="32"/>
                         <Property id="IDAC1" value="32"/>

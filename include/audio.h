@@ -72,6 +72,13 @@
 
 #define AUDIO_FEATURE_UNIT_MASTER_CHANNEL   (0U)
 
+#define AUDIO_HID_ENDPOINT                  (0x4u)
+#define AUDIO_HID_REPORT_SIZE               (1u)
+#define AUDIO_HID_REPORT_VOLUME_UP          (0x20u)
+#define AUDIO_HID_REPORT_VOLUME_DOWN        (0x40u)
+#define AUDIO_HID_REPORT_PLAY_PAUSE         (0x01u)
+#define AUDIO_HID_REPORT_STOP               (0x08u)
+
 #define AUDIO_VOLUME_SIZE   (2U)
 
 #define AUDIO_VOL_MIN_MSB   (0x80u)

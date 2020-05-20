@@ -395,7 +395,7 @@ cy_en_usb_dev_status_t usb_comm_request_received(cy_stc_usb_dev_control_transfer
 
                 default:
                 break;
-            }	/* switch (CY_HI8(transfer->setup.wValue)) */
+            }    /* switch (CY_HI8(transfer->setup.wValue)) */
         }
         /* Endpoint */
         else if ((AUDIO_STREAMING_OUT_ENDPOINT_ADDR == transfer->setup.wIndex) ||

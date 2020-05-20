@@ -34,9 +34,11 @@
 *****************************************************************************/
 
 #include "audio_in.h"
+#include "audio_app.h"
 #include "audio.h"
 #include "usb_comm.h"
 
+#include "cyhal.h"
 #include "cycfg.h"
 #include "cy_sysint.h"
 
@@ -52,17 +54,16 @@ void audio_in_endpoint_callback(USBFS_Type *base,
                                 uint32_t errorType, 
                                 cy_stc_usbfs_dev_drv_context_t *context);
 
+void convert_32_to_24_array(uint8_t *src, uint8_t *dst, uint32_t length);
+
 /*******************************************************************************
 * Audio In Variables
 *******************************************************************************/
 /* USB IN buffer data for Audio IN endpoint */
-CY_USB_DEV_ALLOC_ENDPOINT_BUFFER(audio_in_usb_buffer, AUDIO_IN_ENDPOINT_SIZE);
+CY_USB_DEV_ALLOC_ENDPOINT_BUFFER(audio_in_usb_buffer, AUDIO_IN_ENDPOINT_SIZE + 1);
 
-/* PCM buffer data (16-bits) */
+/* PCM buffer data (32-bits) */
 uint8_t audio_in_pcm_buffer[4 * AUDIO_IN_ENDPOINT_SIZE/AUDIO_SAMPLE_DATA_SIZE];
-
-/* Current number of bytes to be transfer in the Audio IN endpoint */
-volatile uint32_t audio_in_count = AUDIO_FRAME_DATA_SIZE;
 
 /* Audio IN flags */
 volatile bool audio_in_is_recording    = false;
@@ -86,22 +87,8 @@ void audio_in_init(void)
                                               audio_in_endpoint_callback,
                                               &usb_drvContext);
 
-    /* Initialize the DMAs */
-    Cy_DMA_Descriptor_Init(&CYBSP_DMA_I2S_RX_Descriptor_0, &CYBSP_DMA_I2S_RX_Descriptor_0_config);
-    Cy_DMA_Channel_Init(CYBSP_DMA_I2S_RX_HW, CYBSP_DMA_I2S_RX_CHANNEL, &CYBSP_DMA_I2S_RX_channelConfig);
-    Cy_DMA_Enable(CYBSP_DMA_I2S_RX_HW);
-    Cy_DMA_Descriptor_SetSrcAddress(&CYBSP_DMA_I2S_RX_Descriptor_0, (void *) audio_in_pcm_buffer);
-    Cy_DMA_Descriptor_SetDstAddress(&CYBSP_DMA_I2S_RX_Descriptor_0, (void *) audio_in_usb_buffer);
-    Cy_DMA_Channel_Enable(CYBSP_DMA_I2S_RX_HW, CYBSP_DMA_I2S_RX_CHANNEL);
-
-    Cy_DMA_Descriptor_Init(&CYBSP_DMA_USB_IN_Descriptor_0, &CYBSP_DMA_USB_IN_Descriptor_0_config);
-    Cy_DMA_Channel_Init(CYBSP_DMA_USB_IN_HW, CYBSP_DMA_USB_IN_CHANNEL, &CYBSP_DMA_USB_IN_channelConfig);
-    Cy_DMA_Enable(CYBSP_DMA_USB_IN_HW);
-    Cy_DMA_Descriptor_SetSrcAddress(&CYBSP_DMA_USB_IN_Descriptor_0, (void *) &CYBSP_I2S_HW->RX_FIFO_RD);
-    Cy_DMA_Descriptor_SetDstAddress(&CYBSP_DMA_USB_IN_Descriptor_0, (void *) audio_in_pcm_buffer);
-
-    /* Set the count equal the frame size */
-    audio_in_count = audio_in_frame_size;
+    /* Run the I2S RX all the time */
+    cyhal_i2s_start_rx(&i2s);
 }
 
 /*******************************************************************************
@@ -144,7 +131,7 @@ void audio_in_disable(void)
     /* Only disable I2S if Audio OUT is not enabled */
     if (false == usb_comm_enable_out_streaming)
     {
-        Cy_I2S_DisableRx(CYBSP_I2S_HW);
+        cyhal_i2s_stop_rx(&i2s);
     }
 
     audio_in_is_recording = false;
@@ -170,24 +157,27 @@ void audio_in_process(void *arg)
                             RTOS_EVENT_IN | RTOS_EVENT_SYNC,
                             pdFALSE, pdTRUE, portMAX_DELAY);
 
-        audio_in_is_recording = true;
+        if (usb_comm_clock_configured)
+        {
+            audio_in_is_recording = true;
 
-        /* Clear Audio In buffer */
-        memset(audio_in_usb_buffer, 0, AUDIO_IN_ENDPOINT_SIZE);
+            /* Clear Audio In buffer */
+            memset(audio_in_usb_buffer, 0, AUDIO_IN_ENDPOINT_SIZE);
 
-        /* Clear I2S RX FIFO */
-        Cy_I2S_ClearRxFifo(CYBSP_I2S_HW);
+            /* Clear I2S RX FIFO */
+            Cy_I2S_ClearRxFifo(i2s.base);
 
-        /* Enable I2S RX */
-        Cy_I2S_EnableRx(CYBSP_I2S_HW);
+            /* Start I2S RX */
+            cyhal_i2s_start_rx(&i2s);
 
-        /* Start a transfer to the Audio IN endpoint */
-        Cy_USB_Dev_WriteEpNonBlocking(AUDIO_STREAMING_IN_ENDPOINT,
-                                      (uint8_t *) audio_in_usb_buffer,
-                                      AUDIO_IN_ENDPOINT_SIZE,
-                                      &usb_devContext);
+            /* Start a transfer to the Audio IN endpoint */
+            Cy_USB_Dev_WriteEpNonBlocking(AUDIO_STREAMING_IN_ENDPOINT,
+                                          (uint8_t *) audio_in_usb_buffer,
+                                          AUDIO_IN_ENDPOINT_SIZE,
+                                          &usb_devContext);
 
-        xEventGroupClearBits(rtos_events, RTOS_EVENT_IN);
+            xEventGroupClearBits(rtos_events, RTOS_EVENT_IN);
+        }
     }
 }
 
@@ -221,7 +211,8 @@ void audio_in_endpoint_callback(USBFS_Type *base,
                                 uint32_t errorType, 
                                 cy_stc_usbfs_dev_drv_context_t *context)
 {
-    uint32_t count;
+    /* Set the count equal to the frame size */
+    size_t audio_in_count = audio_in_frame_size;
 
     (void) errorType;
     (void) endpoint,
@@ -229,16 +220,19 @@ void audio_in_endpoint_callback(USBFS_Type *base,
     (void) base;
 
     /* Check if should keep recording */
-    if (audio_in_is_recording == true)
+    if ((audio_in_is_recording == true) && (usb_comm_clock_configured == true))
     {
-        /* Trigger I2S RX DMA */
-        #ifdef _PSOC6_01_CONFIG_H_
-            Cy_TrigMux_SwTrigger((uint32_t) TRIG1_OUT_CPUSS_DW1_TR_IN4, CY_TRIGGER_TWO_CYCLES);
-        #endif
+        /* Read all the data in the I2S RX buffer */
+        cyhal_i2s_read(&i2s, (void *) audio_in_pcm_buffer, &audio_in_count);
 
-        #ifdef _PSOC6_02_CONFIG_H_
-            Cy_TrigMux_SwTrigger((uint32_t) TRIG_OUT_MUX_1_PDMA1_TR_IN4, CY_TRIGGER_TWO_CYCLES);
-        #endif
+        /* Limit the size to avoid overflow in the internal buffer */
+        if (audio_in_count > AUDIO_MAX_DATA_SIZE)
+        {
+            audio_in_count = AUDIO_MAX_DATA_SIZE;
+        }
+
+        /* Convert the I2S data array (32-bit) to USB data array (24-bit) */
+        convert_32_to_24_array(audio_in_pcm_buffer, audio_in_usb_buffer, audio_in_count);
 
         Cy_USB_Dev_WriteEpNonBlocking(AUDIO_STREAMING_IN_ENDPOINT,
                                       (uint8_t *) audio_in_usb_buffer,
@@ -247,34 +241,26 @@ void audio_in_endpoint_callback(USBFS_Type *base,
     }
     else
     {
-        Cy_I2S_DisableRx(CYBSP_I2S_HW);
+        cyhal_i2s_stop_rx(&i2s);
     }
-
-    /* Get the current FIFO level */
-    count = Cy_I2S_GetNumInRxFifo(CYBSP_I2S_HW);
-
-    /* Find out if the FIFO level is too full or too empty */
-    if (count > CYBSP_I2S_config.rxFifoTriggerLevel)
-    {
-        /* Too many samples in the FIFO, increase the frame size */
-        audio_in_count = audio_in_frame_size + AUDIO_DELTA_VALUE;
-    }
-    else if (count < audio_in_frame_size)
-    {
-        /* Too few samples in the FIFO, decrease the frame size */
-        audio_in_count = audio_in_frame_size - AUDIO_DELTA_VALUE;
-    }
-    else
-    {
-        /* Right amount of samples in the FIFO, keep frame size */
-        audio_in_count = audio_in_frame_size;
-    }
-
-    /* Update the DMA settings to transfer the right number of samples */
-    Cy_DMA_Descriptor_SetXloopDataCount(&CYBSP_DMA_USB_IN_Descriptor_0, audio_in_count);
-    Cy_DMA_Descriptor_SetYloopDataCount(&CYBSP_DMA_I2S_RX_Descriptor_0, audio_in_count);
-    Cy_DMA_Channel_Enable(CYBSP_DMA_USB_IN_HW, CYBSP_DMA_USB_IN_CHANNEL);
 }
 
+/*******************************************************************************
+* Function Name: convert_32_to_24_array
+********************************************************************************
+* Summary:
+*   Convert a 32-bit array to 24-bit array.
+*
+*******************************************************************************/
+void convert_32_to_24_array(uint8_t *src, uint8_t *dst, uint32_t length)
+{
+    while (0u != length--)
+    {
+        *(dst++) = *src++;
+        *(dst++) = *src++;
+        *(dst++) = *src++;
+        src++;
+    }
+}
 
 /* [] END OF FILE */

@@ -8,7 +8,7 @@
 *
 *
 *******************************************************************************
-* (c) (2020), Cypress Semiconductor Corporation. All rights reserved.
+* (c) 2019-2020, Cypress Semiconductor Corporation. All rights reserved.
 *******************************************************************************
 * This software, including source code, documentation and related materials
 * ("Software"), is owned by Cypress Semiconductor Corporation or one of its
@@ -93,20 +93,20 @@ int main(void)
 
     /* Create the RTOS tasks */
     xTaskCreate(audio_app_process, "Audio App Task",
-    		    RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
-				&rtos_audio_app_task);
+                RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
+                &rtos_audio_app_task);
 
     xTaskCreate(audio_in_process, "Audio In Task",
-    		    RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
-			    &rtos_audio_in_task);
+                RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
+                &rtos_audio_in_task);
 
     xTaskCreate(audio_out_process, "Audio Out Task",
-    		    RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
-				&rtos_audio_out_task);
+                RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
+                &rtos_audio_out_task);
 
     xTaskCreate(touch_process, "Touch Task",
-    			RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
-				&rtos_touch_task);
+                RTOS_STACK_DEPTH, NULL, RTOS_TASK_PRIORITY,
+                &rtos_touch_task);
 
     /* Create RTOS Event Group */
     rtos_events = xEventGroupCreate();
