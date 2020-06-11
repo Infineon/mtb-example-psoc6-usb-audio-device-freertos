@@ -79,9 +79,9 @@ static void usb_low_isr(void);
 * Global Variables
 *******************************************************************************/
 uint8_t usb_comm_mute;
-uint8_t usb_comm_cur_volume[AUDIO_VOLUME_SIZE];
-uint8_t usb_comm_min_volume[AUDIO_VOLUME_SIZE] = {AUDIO_VOL_MIN_LSB, AUDIO_VOL_MIN_MSB};
-uint8_t usb_comm_max_volume[AUDIO_VOLUME_SIZE] = {AUDIO_VOL_MAX_LSB, AUDIO_VOL_MAX_MSB};
+uint8_t usb_comm_cur_volume[AUDIO_VOLUME_SIZE]; 
+uint8_t usb_comm_min_volume[AUDIO_VOLUME_SIZE] = {CY_USB_DEV_AUDIO_VOLUME_MIN_LSB, CY_USB_DEV_AUDIO_VOLUME_MIN_MSB};
+uint8_t usb_comm_max_volume[AUDIO_VOLUME_SIZE] = {CY_USB_DEV_AUDIO_VOLUME_MAX_LSB, CY_USB_DEV_AUDIO_VOLUME_MAX_MSB};
 uint8_t usb_comm_res_volume[AUDIO_VOLUME_SIZE] = {AUDIO_VOL_RES_LSB, AUDIO_VOL_RES_MSB};
 
 uint8_t usb_comm_ep_map[] = {0U, 0U, 1U};
@@ -353,6 +353,7 @@ cy_en_usb_dev_status_t usb_comm_request_received(cy_stc_usb_dev_control_transfer
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 case CY_USB_DEV_AUDIO_RQST_SET_MIN:
                                 {
@@ -362,6 +363,7 @@ cy_en_usb_dev_status_t usb_comm_request_received(cy_stc_usb_dev_control_transfer
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 case CY_USB_DEV_AUDIO_RQST_SET_MAX:
                                 {
@@ -371,6 +373,7 @@ cy_en_usb_dev_status_t usb_comm_request_received(cy_stc_usb_dev_control_transfer
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 case CY_USB_DEV_AUDIO_RQST_SET_RES:
                                 {
@@ -380,6 +383,7 @@ cy_en_usb_dev_status_t usb_comm_request_received(cy_stc_usb_dev_control_transfer
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 default:
                                 break;
@@ -539,6 +543,7 @@ cy_en_usb_dev_status_t usb_comm_request_completed(cy_stc_usb_dev_control_transfe
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 case CY_USB_DEV_AUDIO_RQST_SET_MIN:
                                 {
@@ -547,6 +552,7 @@ cy_en_usb_dev_status_t usb_comm_request_completed(cy_stc_usb_dev_control_transfe
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 case CY_USB_DEV_AUDIO_RQST_SET_MAX:
                                 {
@@ -555,6 +561,7 @@ cy_en_usb_dev_status_t usb_comm_request_completed(cy_stc_usb_dev_control_transfe
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 case CY_USB_DEV_AUDIO_RQST_SET_RES:
                                 {
@@ -563,6 +570,7 @@ cy_en_usb_dev_status_t usb_comm_request_completed(cy_stc_usb_dev_control_transfe
 
                                     retStatus = CY_USB_DEV_SUCCESS;
                                 }
+                                break;
 
                                 default:
                                 break;

@@ -21,7 +21,7 @@
                 <Node type="interface.audio.1">
                     <Node type="alternate.ac.1">
                         <Field name="bInterfaceProtocol" value="0"/>
-                        <Field name="iInterface" value=""/>
+                        <Field name="iInterface" value="PSoC 6 USB Audio Device"/>
                         <Node type="alternate.ac.h">
                             <Field name="bInCollection" value="2"/>
                             <Field name="baInterfaceNr" value="0x01; 0x02;"/>
@@ -104,7 +104,7 @@
                             <Field name="endpointNum" value="EP1"/>
                             <Field name="direction" value="OUT"/>
                             <Field name="Transfer Type" value="Isochronous"/>
-                            <Field name="Synchronization Type" value="Adaptive"/>
+                            <Field name="Synchronization Type" value="Asynchronous"/>
                             <Field name="Usage Type" value="Data endpoint"/>
                             <Field name="wMaxPacketSize" value="294"/>
                             <Field name="bInterval" value="1"/>
@@ -125,7 +125,7 @@
                             <Field name="Synchronization Type" value="No Synchronization"/>
                             <Field name="Usage Type" value="Feedback endpoint"/>
                             <Field name="wMaxPacketSize" value="3"/>
-                            <Field name="bInterval" value="8"/>
+                            <Field name="bInterval" value="4"/>
                             <Field name="bRefresh" value="3"/>
                             <Field name="bSynchAddress" value="0"/>
                         </Node>
@@ -157,7 +157,7 @@
                             <Field name="endpointNum" value="EP2"/>
                             <Field name="direction" value="IN"/>
                             <Field name="Transfer Type" value="Isochronous"/>
-                            <Field name="Synchronization Type" value="Synchronous"/>
+                            <Field name="Synchronization Type" value="Asynchronous"/>
                             <Field name="Usage Type" value="Data endpoint"/>
                             <Field name="wMaxPacketSize" value="294"/>
                             <Field name="bInterval" value="1"/>
@@ -177,7 +177,7 @@
                     <Node type="alternate.hid">
                         <Field name="bInterfaceSubClass" value="0"/>
                         <Field name="bInterfaceProtocol" value="0"/>
-                        <Field name="iInterface" value="AudioPlaybackControl"/>
+                        <Field name="iInterface" value="PlaylistControl"/>
                         <Node type="hid">
                             <Field name="bCountryCode" value="0x00"/>
                             <Field name="Report" value="0x05;0x0C;0x09;0x01;0xA1;0x01;0x15;0x00;0x25;0x01;0x75;0x01;0x95;0x07;0x09;0xCD;0x09;0xB5;0x09;0xB6;0x09;0xB7;0x09;0xE2;0x09;0xE9;0x09;0xEA;0x81;0x02;0x95;0x01;0x81;0x01;0xC0"/>

@@ -43,8 +43,6 @@ You must connect the CY8CKIT-028-TFT shield to the Arduino header if you are usi
 
 This example uses the [Audacity](https://www.audacityteam.org/) tool to record and play sound. You can also use any software tool that plays music.
 
-This code example was tested with MacOS and Windows. You are able to stream audio data with both OS. However, the CapSense actions work with Windows only.
-
 ## Using the Code Example
 
 ### In Eclipse IDE for ModusToolbox:
@@ -262,7 +260,8 @@ Document Title: *CE224997* - *PSoC 6 MCU: USB Audio Device with FreeRTOS*
 | Version | Description of Change |
 | ------- | --------------------- |
 | 1.0.0   | New code example      |
-| 1.1.0   | Updated to support ModusToolbox software v2.1, added new kits<br>Cosmetic changes to code  |
+| 1.1.0   | Updated to support ModusToolbox software v2.1, added new kits<br>Cosmetic changes to code |
+| 1.2.0   | Fixed volume control issue |
 
 ------
 

@@ -280,17 +280,20 @@ void audio_app_clock_init(void)
 *******************************************************************************/
 void audio_app_update_codec_volume(void)
 {
-    int8_t  vol_usb = (int8_t) usb_comm_cur_volume[1];
+    int8_t  vol_usb = (((int8_t) usb_comm_cur_volume[1])/2) + PC_VOLUME_MSB_CODEC_OFFSET;
 
-    if (vol_usb > ((int8_t) AUDIO_VOL_MAX_MSB/2))
+    /* If the volume is negative, set to minimum volume */
+    if (vol_usb <= 0)
     {
-        audio_app_volume = AK4954A_HP_VOLUME_MAX;
+        audio_app_volume = AK4954A_HP_VOLUME_MIN;
     }
     else
     {
-        audio_app_volume = AUDIO_VOL_MAX_MSB/2 - vol_usb;
+        /* Use the formula: Volume = COEFF / (VOL/2 + OFFSET) */
+        audio_app_volume = (PC_VOLUME_CODEC_COEFF / ((uint16_t) vol_usb));
     }
 
+    /* Check if the volume changed */
     if (audio_app_volume != audio_app_prev_volume)
     {
         ak4954a_adjust_volume(audio_app_volume);

@@ -81,10 +81,6 @@
 
 #define AUDIO_VOLUME_SIZE   (2U)
 
-#define AUDIO_VOL_MIN_MSB   (0x80u)
-#define AUDIO_VOL_MIN_LSB   (0x01u)
-#define AUDIO_VOL_MAX_MSB   (0x7Fu)
-#define AUDIO_VOL_MAX_LSB   (0xFFu)
 #define AUDIO_VOL_RES_MSB   (0x00u)
 #define AUDIO_VOL_RES_LSB   (0x01u)
 

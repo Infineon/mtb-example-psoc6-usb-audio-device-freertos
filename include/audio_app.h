@@ -36,11 +36,15 @@
 #define AUDIO_APP_H
 
 #include "cyhal.h"
+#include "audio.h"
 
 /*******************************************************************************
 * Constants
 *******************************************************************************/
-#define AUDIO_APP_MCLK_PIN  P5_0
+#define AUDIO_APP_MCLK_PIN          P5_0
+
+#define PC_VOLUME_MSB_CODEC_OFFSET  64
+#define PC_VOLUME_CODEC_COEFF       4096
 
 /*******************************************************************************
 * Externs
