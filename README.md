@@ -1,3 +1,5 @@
+**This repository is deprecated.** Use the ModusToolbox&trade; example available here - https://github.com/Infineon/mtb-example-usb-device-audio-freertos
+
 # PSoC 6 MCU: USB Audio Device (FreeRTOS)
 
 This example demonstrates how to use PSoC® 6 MCU to implement a USB audio device and HID audio playback control that connects to the PC via the USB interface. The example uses FreeRTOS.
